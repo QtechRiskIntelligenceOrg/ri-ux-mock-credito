@@ -1,0 +1,55 @@
+flowchart TD
+    H[Header global: Mercado · Liquidez · CRÉDITO · Operacional<br/>Liquidez y Operacional en gris] -->|"Clic 'Crédito' (default del módulo)"| OV
+
+    subgraph SB[MenuSidebar 'Crédito']
+        direction TB
+        P1[Visión General — default]
+        PF[Portafolio]
+        SN[Sensibilidades]
+        MR[Métricas de Riesgo]
+        MG[Marginal]
+        FR[Factores de Riesgo]
+        ESC[Escenarios]
+        BT[Backtesting]
+        DT["Deterioro (NIIF 9)"]
+    end
+
+    P1 --> OV["Crédito › Visión General (default)<br/>(arquetipo overview; sin tabs, sin selector de medida)<br/>badge supuesto · badge as_of<br/>Fila 1: Portafolio · Composición por Calificación ·<br/>Exposición por Tipo de Instrumento · VaR Total 99%·1a + límite<br/>Fila media: tabla Límites y Métricas · Top Drivers (prorrateo) ·<br/>Variación Δ VaR por rating<br/>Fila 3: 9 NavCards → secciones activas"]
+
+    OV -.->|NavCard| PG
+    OV -.->|NavCard| PC
+    OV -.->|NavCard| MRF
+    OV -.->|NavCard| MGG
+    OV -.->|NavCard| EIR
+    OV -.->|NavCard| FRM
+    OV -.->|NavCard| SNS
+    OV -.->|NavCard| BTR
+    OV -.->|NavCard| DTS
+
+    MR --> MRF["Crédito › Métricas de Riesgo › A la Fecha (default)<br/>(molde dashboard) selector VaR·ES·Std · badge supuesto<br/>KPIs: Medida Total · Medida/VM · Top Driver ·<br/>Benef. diversificación + Uso Límite<br/>2×2: barras medida×rating · dona Vista-por (emisor/tipo) ·<br/>standalone vs contribución · tabla rating→emisor (sin Var)"]
+    MRF <-->|tabs pill| MRH["Crédito › Métricas de Riesgo › Histórico<br/>KPIs: Medida Total · Rating mayor Δ · Vol anualizada ·<br/>Δ Razón Medida/VM + Uso Límite<br/>2×2: área apilada temporal medida×rating (marcadores de<br/>cambio de supuesto) · evolución razón Medida/VM ·<br/>divergentes cambio · tabla comparativa (Var DOP · Var %)"]
+
+    PF --> PG["Crédito › Portafolio › Global<br/>(molde dashboard; sin selector de medida)<br/>KPIs: VM · Posiciones · Emisores · Rating predominante<br/>+ Límite de concentración<br/>2×2: área apilada rating · dona Vista-por ·<br/>divergentes cambio · tabla rating→emisor"]
+    PG <-->|tabs pill| PC["Crédito › Portafolio › Concentración<br/>KPIs: HHI · Top-5 · Mayor conc. · ΔHHI + Estado Límites<br/>2×2: top-7 emisores · evolución HHI+límite ·<br/>divergentes · tabla emisor con límites"]
+
+    MG --> MGG["Crédito › Marginal › Global<br/>(molde dashboard) selector VaR·ES·Std · badge supuesto<br/>KPIs: Marginal promedio · Mayor contribución (componental) ·<br/>Posiciones sobre umbral · HHI contribuciones + Uso Límite<br/>2×2: scatter iso-risk (cuadrantes A/B/C, fallen angels,<br/>overlays h/v/hipérbola) · dona componental Vista-por ·<br/>divergentes ranking con signo · tabla rating→emisor→instrumento<br/>(VM · Marginal · Componental · Standalone · Benef. div.)"]
+
+    ESC --> EIR["Crédito › Escenarios › Impacto en Riesgo<br/>(arquetipo simulador: riel persistente<br/>configurar → aplicar → leer)<br/>badge supuesto por familia de shock<br/>Riel: Libro (PD·N defaults·N downgrades) /<br/>Supuesto (barrido ρ 15/25/35 · fuente · recovery)<br/>KPIs: VM Pre · VM Post · G/P · Driver<br/>Paneles: divergentes P&L×rating · histograma<br/>post-shock multimodal + línea VaR · waterfall ·<br/>tabla rating→emisor→instrumento"]
+
+    FR --> FRM["Crédito › Factores de Riesgo › Mapa de Factores<br/>(molde dashboard; sin selector — VaR 99%·1a etiquetado)<br/>badge supuesto · badge as_of<br/>KPIs: VaR Total · Factor dominante · Efecto correlación ·<br/>Prob ≥1 default + Uso Límite<br/>2×2: barras Euler por factor + overlay correlación ·<br/>umbrales de Merton (variable latente, selector de rating) ·<br/>heatmap matriz ρ asumida · tabla breakdown factor→rating"]
+
+    SN --> SNS["Crédito › Sensibilidades › Supuestos<br/>(molde dashboard; sin selector — VaR 99%·1a etiquetado)<br/>badge supuesto = ancla del tornado · badge as_of<br/>KPIs: VaR base · Supuesto más influyente ·<br/>Supuestos que cruzan el límite · Amplitud VaR por ρ + Uso Límite<br/>2×2: tornado OAT+CRN (top-7) · curva VaR vs ρ + límite ·<br/>Δ contribución Euler por rating del supuesto seleccionado ·<br/>tabla de barridos supuesto→rating"]
+    SNS -.->|"cross-link TR"| EIR
+
+    BT --> BTR["Crédito › Backtesting › Resumen de Excepciones<br/>(molde dashboard; sin selector — VaR 99%·1a etiquetado)<br/>badge supuesto + chip 'Ventana: N cambios' · badge as_of<br/>KPIs: Excepciones (ventana válida) · Kupiec POF · Christoffersen ·<br/>Precisión MC de la cola @99% + Uso Límite<br/>2×2: serie de excepciones (P&L vs −VaR escalado, rombos) ·<br/>panel de pruebas + semáforo Basilea (veredicto estadístico,<br/>no límites) · traza de convergencia + bandas por cuantil ·<br/>tabla de excepciones (ventana válida sí/no)"]
+
+    MRF -.->|sidebar| MGG    MRF -.->|sidebar| PG
+    MRF -.->|sidebar| EIR
+    OV <-.->|sidebar| MRF
+    MGG -.->|sidebar| EIR
+
+
+    DT --> DTS["Crédito › Deterioro (NIIF 9) › Staging (default)<br/>(molde dashboard; sin selector — ECL NIIF 9 etiquetado)<br/>badge supuesto seccional: + NIIF 9 SICR ≥3 notches ·<br/>backstop 30d (refutable) · 3 escenarios (60/25/15) · badge as_of<br/>KPIs: VM en alcance ECL (AC+FVOCI) · Provisión ECL total ·<br/>VM Stage 2 · VM Stage 3 + Uso Límite<br/>2×2: barras apiladas rating×stage (toggle VM/N/provisión) ·<br/>panel criterios SICR (cuantitativo activo, backstop,<br/>cualitativos, expedient RD con juicio doc., simetría 2→1) ·<br/>dona AC·FVOCI·FVTPL (FVTPL excluido de ECL, motivo visible) ·<br/>tabla rating→emisor→instrumento (Δ notches, criterio,<br/>expedient, stage, provisión DOP)"]
+    DTS <-->|tabs pill| DTE["Crédito › Deterioro (NIIF 9) › ECL<br/>(molde dashboard; sin selector — ECL NIIF 9 etiquetado)<br/>badge supuesto seccional (idéntico a Staging) · badge as_of<br/>KPIs: Provisión ECL total (pinneada de Staging) ·<br/>Convexidad de escenarios (ponderado vs promedio) ·<br/>ECL lifetime S2+S3 · Cobertura s/ costo amortizado + Uso Límite<br/>2×2: panel escenarios macro ponderados (base/adverso/favorable,<br/>probabilidades, macro RD, líneas ponderado vs promedio) ·<br/>barras rating×horizonte 12m/lifetime (toggle Clasificación) ·<br/>mecánica del cálculo (curvas PD escalonadas · EAD · LGD PIT;<br/>EIR original, fórmula) · tabla rating→emisor→instrumento<br/>(PD base, LGD, EAD, EIR original ⚑, ECL por escenario,<br/>provisión DOP, footer de cuadre Σ=KPI 1)"]
+    DTS <-->|tabs pill| DTM["Crédito › Deterioro (NIIF 9) › Movimientos<br/>(molde dashboard; sin selector — ECL NIIF 9 etiquetado)<br/>badge seccional idéntico · badge as_of · selector local de corte de comparación<br/>KPIs: Provisión ECL al corte (pinneada) · Δ Provisión del período ·<br/>VM deteriorado (VM, DOP) · VM mejorado + Uso Límite<br/>2×2: waterfall roll-forward provisión (altas/bajas/migraciones/<br/>cambio de medición; cuadre = KPI 2) · sankey migraciones stages<br/>1↔2↔3 + altas/bajas (VM) · Δ provisión por rating ·<br/>tabla rating→emisor→instrumento (stage ant→act, motivo,<br/>Δ provisión, registro P&L/ORI)"]
+    DTS <-->|tabs pill| DTR["Crédito › Deterioro (NIIF 9) › Conciliación REA<br/>(molde dashboard; sin selector — ECL NIIF 9 etiquetado)<br/>badge seccional idéntico · badge as_of<br/>KPIs: Provisión ECL NIIF 9 (pinneada) · Provisión REA SB (A-E) ·<br/>Exigible = mayor de los dos (chip gobierna) ·<br/>Diferencia ECL−REA (% s/ REA) + Uso Límite<br/>2×2: barras pareadas ECL vs REA por categoría A-E ·<br/>panel mapeo y reglas REA (rating→categoría, % por categoría,<br/>regla del mayor a nivel cartera) · bridge de la diferencia<br/>(forward-looking · lifetime · LGD PIT · EIR; cuadre = KPI 4) ·<br/>tabla rating→emisor→instrumento (cat. REA, ECL, diferencia,<br/>doble registro FVOCI/ORI)"]
